@@ -4,11 +4,64 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"testing"
+
+	"github.com/tencentcloudstack/terraform-provider-tencentcloud/tencentcloud/internal/helper"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 )
+
+const testEniName = "ci-test-eni"
+const testEniVpcName = "ci-test-eni-vpc"
+
+func init() {
+	resource.AddTestSweepers("tencentcloud_eni", &resource.Sweeper{
+		Name: "tencentcloud_eni",
+		F:    testEniSweep,
+	})
+}
+
+func testEniSweep(r string) error {
+	logId := getLogId(contextNil)
+	ctx := context.WithValue(context.TODO(), logIdKey, logId)
+
+	client, err := sharedClientForRegion(r)
+	if err != nil {
+		return err
+	}
+
+	service := VpcService{
+		client: client.(*TencentCloudClient).apiV3Conn,
+	}
+
+	enis, err := service.DescribeEniByFilters(ctx, nil, nil, nil, nil, helper.String(testEniName), nil, nil, nil)
+
+	if err != nil {
+		return err
+	}
+
+	for _, v := range enis {
+		id := *v.NetworkInterfaceId
+		if err := service.DeleteEni(ctx, id); err != nil {
+			log.Printf("delete eni error: %s", err.Error())
+			continue
+		}
+	}
+
+	vpcs, err := service.DescribeVpcs(ctx, "", testEniVpcName, nil, nil, "", "")
+
+	for _, v := range vpcs {
+		id := v.vpcId
+		if err := service.DeleteVpc(ctx, id); err != nil {
+			log.Printf("delete vpc error %s", err.Error())
+			continue
+		}
+	}
+
+	return nil
+}
 
 func TestAccTencentCloudEni_basic(t *testing.T) {
 	t.Parallel()
