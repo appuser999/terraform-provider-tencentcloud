@@ -884,6 +884,7 @@ func Provider() terraform.ResourceProvider {
 			"tencentcloud_ssm_secret_versions":                      dataSourceTencentCloudSsmSecretVersions(),
 			"tencentcloud_cdh_instances":                            dataSourceTencentCloudCdhInstances(),
 			"tencentcloud_dayu_eip":                                 dataSourceTencentCloudDayuEip(),
+			"tencentcloud_apm_agent":                                dataSourceTencentCloudApmAgent(),
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
@@ -1078,6 +1079,7 @@ func Provider() terraform.ResourceProvider {
 			"tencentcloud_dnspod_record":                           resourceTencentCloudDnspodRecord(),
 			"tencentcloud_private_dns_zone":                        resourceTencentCloudPrivateDnsZone(),
 			"tencentcloud_private_dns_record":                      resourceTencentCloudPrivateDnsRecord(),
+			"tencentcloud_apm":                                     resourceTencentCloudAPM(),
 		},
 
 		ConfigureFunc: providerConfigure,

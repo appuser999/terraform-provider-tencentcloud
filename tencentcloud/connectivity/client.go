@@ -16,6 +16,7 @@ import (
 	antiddos "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/antiddos/v20200309"
 	api "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/api/v20201106"
 	apigateway "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/apigateway/v20180808"
+	apm "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/apm/v20210622"
 	as "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/as/v20180419"
 	cam "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cam/v20190116"
 	cbs "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cbs/v20170312"
@@ -106,6 +107,7 @@ type TencentCloudClient struct {
 	dnsPodConn         *dnspod.Client
 	privateDnsConn     *privatedns.Client
 	antiddosConn       *antiddos.Client
+	apmConn            *apm.Client
 }
 
 // NewClientProfile returns a new ClientProfile
@@ -692,4 +694,17 @@ func (me *TencentCloudClient) UseAntiddosClient() *antiddos.Client {
 	me.antiddosConn.WithHttpTransport(&LogRoundTripper{})
 
 	return me.antiddosConn
+}
+
+// UseApmClient returns apm client for service
+func (me *TencentCloudClient) UseApmClient() *apm.Client {
+	if me.apmConn != nil {
+		return me.apmConn
+	}
+
+	cpf := me.NewClientProfile(300)
+	me.apmConn, _ = apm.NewClient(me.Credential, me.Region, cpf)
+	me.apmConn.WithHttpTransport(&LogRoundTripper{})
+
+	return me.apmConn
 }
