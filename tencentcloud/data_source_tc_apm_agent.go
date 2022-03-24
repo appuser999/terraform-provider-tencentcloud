@@ -1,11 +1,11 @@
 /*
-Use this data source to query detailed information of audits.
+Use this data source to query detailed information of apm agent.
 
 Example Usage
 
 ```hcl
-data "tencentcloud_audits" "audits" {
-  name       = "test"
+data "tencentcloud_apm_agent"  {
+  instance_id       = "xxx"
 }
 ```
 */
@@ -34,7 +34,7 @@ func dataSourceTencentCloudApmAgent() *schema.Resource {
 			"agent_download_url": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: "Name of the audits.",
+				Description: "Name of save results.",
 			},
 			"collector_url": {
 				Type:        schema.TypeString,
@@ -93,7 +93,8 @@ func dataSourceTencentCloudApmAgentRead(d *schema.ResourceData, meta interface{}
 		return err
 	}
 
-	log.Printf("123: %v", *agentInfo.Token)
+	log.Printf("token: %v", *agentInfo.Token)
+	d.SetId(instanceId)
 
 	_ = d.Set("agent_download_url", *agentInfo.AgentDownloadURL)
 	_ = d.Set("collector_url", *agentInfo.CollectorURL)

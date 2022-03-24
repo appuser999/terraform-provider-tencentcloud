@@ -1,5 +1,5 @@
 /*
-Provides a Load Balancer resource.
+Provides a APM resource.
 
 Example Usage
 
@@ -34,22 +34,22 @@ func resourceTencentCloudAPM() *schema.Resource {
 			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "The network type of the LB. Valid value: 'OPEN', 'INTERNAL'.",
+				Description: "The name of the APM instance.",
 			},
 			"description": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "The type of the LB. Valid value: 'CLASSIC', 'APPLICATION'.",
+				Description: "The description of the APM instance.",
 			},
 			"trace_duration": {
 				Type:        schema.TypeInt,
 				Optional:    true,
-				Description: "The name of the LB.",
+				Description: "Trace data retention duration.",
 			},
 			"span_daily_counters": {
 				Type:        schema.TypeInt,
 				Optional:    true,
-				Description: "The VPC ID of the LB, unspecified or 0 stands for CVM basic network.",
+				Description: "Daily report quota for span.",
 			},
 		},
 	}
@@ -91,7 +91,6 @@ func resourceTencentCloudAPMCreate(d *schema.ResourceData, meta interface{}) err
 			err = fmt.Errorf("instance id is nil")
 			return resource.NonRetryableError(err)
 		}
-		// requestId := *response.Response.RequestId
 		instanceId = *response.Response.InstanceId
 
 		return nil
